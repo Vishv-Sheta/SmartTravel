@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTravel - Route Results</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .search-container {
+            padding: 3rem max(5%, calc((100vw - 1200px) / 2));
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        @media (min-width: 900px) {
+            .search-container {
+                display: grid;
+                grid-template-columns: 280px 1fr;
+                align-items: start;
+            }
+        }
+
+        .filter-box {
+            padding: 2rem;
+            position: sticky;
+            top: 6rem;
+        }
+
+        .filter-box h3 {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .route-card {
+            padding: 1.5rem 2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .route-card:hover {
+            transform: translateX(5px);
+            border-color: rgba(59, 130, 246, 0.5);
+        }
+
+        .ai-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--accent);
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            padding: 0.2rem;
+            letter-spacing: 1px;
+        }
+
+        .route-card.recommended {
+            border: 1px solid var(--accent);
+            padding-top: 2rem;
+        }
+
+        .operator-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .operator-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .timeline-time {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .timeline-line {
+            width: 100px;
+            height: 2px;
+            background: var(--glass-border);
+            position: relative;
+        }
+
+        .timeline-line::after {
+            content: '>';
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            color: var(--text-muted);
+        }
+
+        .price-action {
+            text-align: right;
+        }
+
+        .price {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        #loading-msg {
+            font-size: 1.2rem;
+            color: var(--primary);
+            text-align: center;
+            padding: 3rem;
+            grid-column: 1/-1;
+        }
+
+        @media (max-width: 900px) {
+            .route-card {
+                flex-direction: column;
+                gap: 1.5rem;
+                align-items: flex-start;
+            }
+
+            .price-action {
+                text-align: left;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="brand">AuraTravel</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Routes</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="login.html" class="btn-primary" id="nav-login-btn">Sign In</a>
+        </div>
+    </nav>
+    <script src="nav.js"></script>
+
+    <div class="search-container animate-in">
+
+        <div class="glass-panel filter-box">
+            <h3>Modify Search</h3>
+            <form id="refine-form">
+                <div class="form-group">
+                    <label>From</label>
+                    <input type="text" class="form-control" name="from" id="filter-from" required>
+                </div>
+                <div class="form-group">
+                    <label>To</label>
+                    <input type="text" class="form-control" name="to" id="filter-to" required>
+                </div>
+                <div class="form-group">
+                    <label>Mode</label>
+                    <select class="form-control" name="mode" id="filter-mode">
+                        <option value="">Any</option>
+                        <option value="Flight">Flight</option>
+                        <option value="Train">Train</option>
+                        <option value="Bus">Bus</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%;">Update AI Scan</button>
+            </form>
+        </div>
+
+        <div>
+            <div class="results-header">
+                <h2>Generated Operators & Routes</h2>
+                <span id="route-count-badge" style="color: var(--text-muted);">0 options found</span>
+            </div>
+
+            <div id="results-list">
+                <div id="loading-msg">Summoning global intelligence...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromLoc = urlParams.get('from') || '';
+            const toLoc = urlParams.get('to') || '';
+            const modeLoc = urlParams.get('mode') || '';
+
+            document.getElementById('filter-from').value = fromLoc;
+            document.getElementById('filter-to').value = toLoc;
+            document.getElementById('filter-mode').value = modeLoc;
+
+            fetchRoutes(fromLoc, toLoc, modeLoc)
+
+        });
+
+        async function fetchRoutes(fromLoc, toLoc, modeLoc) {
+            try {
+                const query = new URLSearchParams();
+                
+                query.append("from", fromLoc);
+                query.append("to", toLoc);
+                query.append("mode", modeLoc);
+
+                console.log('Constructed query string:', query.toString());
+
+                const res = await fetch(`/routes?${query.toString()}`);
+                const data = await res.json();
+
+                console.log('Response data:', data);
+
+                const container = document.getElementById('results-list');
+                const badge = document.getElementById('route-count-badge');
+                container.innerHTML = '';
+
+                if (!data || data.length === 0) {
+                    container.innerHTML = '<div class="glass-panel" style="padding: 3rem; text-align: center;">No exact routes found for this query.</div>';
+                    badge.innerText = '0 options found';
+                    return;
+                }
+
+                badge.innerText = `${data.length} options found`;
+
+                data.forEach((route, idx) => {
+                    const isReco = route.isRecommended ? true : (idx === 0 && !data.some(r => r.isRecommended));
+                    const opInitial = route.operator ? route.operator.charAt(0) : route.MODE.charAt(0);
+
+                    const card = `
+                        <div class="glass-panel route-card ${isReco ? 'recommended' : ''} animate-in" style="animation-delay: ${idx * 0.1}s;">
+                            ${isReco ? '<div class="ai-banner">✨ AI BEST VALUE CHOISE</div>' : ''}
+                            
+                            <div class="operator-info">
+                                <div class="operator-avatar">${opInitial}</div>
+                                <div>
+                                    <h3 style="margin-bottom:0.2rem;">${route.operator || "Standard Carrier"}</h3>
+                                    <span style="color: var(--text-muted); font-size: 0.9rem;">${route.MODE} Route</span>
+                                </div>
+                            </div>
+
+                            <div class="timeline">
+                                <div>
+                                    <div class="timeline-time">${route.deptime || 'TBD'}</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">${route.fromloc}</div>
+                                </div>
+                                <div class="timeline-line"></div>
+                                <div>
+                                    <div class="timeline-time">${route.arrtime || 'TBD'}</div>
+                                    <div style="font-size: 0.8rem; color: var(--text-muted);">${route.toloc}</div>
+                                </div>
+                            </div>
+
+                            <div class="price-action">
+                                <div class="price">₹${route.price}</div>
+                                <button class="btn-primary" onclick="proceedToBook(${route.id})">Book Now</button>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += card;
+                });
+            } catch (e) {
+                console.error(e);
+                document.getElementById('results-list').innerHTML = '<div style="color: #ef4444;">Error fetching data.</div>';
+                console.error('Error fetching routes:', error);
+            }
+        }
+
+        function proceedToBook(id) {
+            window.location.href = `payment.html?routeId=${id}`;
+        }
+
+    </script>
+</body>
+
+</html>

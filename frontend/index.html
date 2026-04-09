@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTravel - Smart Booking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Hero Section */
+        .hero {
+            min-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 5rem max(5%, calc((100vw - 1200px) / 2));
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 6vw, 4rem);
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 3rem;
+        }
+
+        /* Search Widget */
+        .search-widget {
+            display: flex;
+            gap: 1rem;
+            padding: 2rem;
+            width: 100%;
+            max-width: 1000px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .search-widget .form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-bottom: 0;
+        }
+
+        .search-widget button {
+            height: 52px;
+            padding: 0 2rem;
+        }
+
+        /* AI Recommendations */
+        .ai-section {
+            padding: 5rem max(5%, calc((100vw - 1200px) / 2));
+            background: var(--bg-card);
+            /* Add nice separation from hero */
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-header h2 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            color: var(--text-main);
+        }
+
+        /* Recommendations Sections */
+        .recommendations {
+            padding: 5rem max(5%, calc((100vw - 1200px) / 2));
+            background: var(--bg-card);
+            /* Soft break from hero background */
+        }
+
+        .reco-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .reco-card {
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .reco-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: var(--accent);
+        }
+
+        .reco-img-placeholder {
+            height: 180px;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .reco-content {
+            padding: 1.5rem;
+        }
+
+        .reco-content h3 {
+            margin: 0.5rem 0;
+            font-size: 1.4rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .reco-content p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--accent);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .reco-price {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text-main);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 800;
+            box-shadow: var(--shadow);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+
+            .search-widget {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 1.5rem;
+            }
+
+            .search-widget .form-group {
+                min-width: 100%;
+            }
+
+            .search-widget button {
+                width: 100%;
+                margin-top: 1rem;
+            }
+
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <a href="index.html" class="brand">AuraTravel</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Routes</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="login.html" class="btn-primary" id="nav-login-btn">Sign In</a>
+        </div>
+    </nav>
+    <script src="nav.js"></script>
+
+    <div class="hero animate-in">
+        <h1>Navigate the World <br> with <span class="brand">AI Precision</span></h1>
+        <p>AuraTravel uses predictive AI to connect you with thousands of operators across flights, buses, and trains to
+            find the perfect journey.</p>
+
+        <form class="search-widget glass-panel" action="search.html" method="GET">
+            <div class="form-group">
+                <label>From</label>
+                <input type="text" class="form-control" name="from" placeholder="E.g. Ahmedabad" required>
+            </div>
+            <div class="form-group">
+                <label>To</label>
+                <input type="text" class="form-control" name="to" placeholder="E.g. Udaipur" required>
+            </div>
+            <div class="form-group">
+                <label>Mode</label>
+                <select class="form-control" name="mode">
+                    <option value="">Any</option>
+                    <option value="Flight">Flight</option>
+                    <option value="Train">Train</option>
+                    <option value="Bus">Bus</option>
+                </select>
+            </div>
+            <button type="submit" class="btn-primary">Search Routes</button>
+        </form>
+    </div>
+
+    <div class="ai-section animate-in" style="animation-delay: 0.2s;">
+        <div class="section-header">
+            <h2>✨ AI Top Picks for You</h2>
+            <p style="color: var(--text-muted); margin-top: 0.5rem;">Based on global trending data and your location.
+            </p>
+        </div>
+        <div class="reco-grid" id="ai-reco-container">
+            <!-- Loading skeleton -->
+            <div style="text-align:center; grid-column: 1/-1; color: var(--text-muted);">
+                Analyzing travel patterns...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchAIRecommendations() {
+            try {
+                const res = await fetch('/api/ai/recommendations');
+                const data = await res.json();
+
+                if (data.success && data.picks) {
+                    const container = document.getElementById('ai-reco-container');
+                    container.innerHTML = '';
+
+                    data.picks.forEach((pick, index) => {
+                        const delay = (index + 1) * 0.15;
+                        const card = `
+                <div class="reco-card animate-in" style="animation-delay: ${delay}s; padding-bottom: 0.5rem; cursor: pointer;" onclick="location.href='search.html?to=${pick.destination}'">
+                    <div class="reco-img-placeholder" style="${pick.image ? `background-image: url('${pick.image}'); background-size: cover; background-position: center; color: transparent; text-shadow: none;` : ''}">${(pick.destination || 'Route').substring(0, 2)}</div>
+                    <div class="reco-price">₹${pick.price}</div>
+                    <div class="reco-content">
+                        <span class="badge">💎 Premium Pick</span>
+                        <h3>${pick.destination}</h3>
+                        <p>Smart AI Deal Available</p>
+                    </div>
+                </div>
+            `;
+                        container.innerHTML += card;
+                    });
+                }
+            } catch (err) {
+                console.error('Failed to load AI Recommendations', err);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchAIRecommendations);
+    </script>
+</body>
+
+</html>

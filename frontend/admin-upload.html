@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTravel - Cloudinary Uploader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container { max-width: 600px; margin: 4rem auto; padding: 2rem; }
+        .admin-header { text-align: center; margin-bottom: 2rem; }
+        .admin-header h1 { color: var(--primary); font-family: 'Outfit'; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="brand">AuraTravel</a>
+        <div class="nav-links"><a href="index.html">Home</a></div>
+    </nav>
+    <div class="admin-container glass-panel">
+        <div class="admin-header">
+            <h1>Admin Image Upload</h1>
+            <p style="color: var(--text-muted); margin-top: 5px;">Attach a Cloudinary Image to a Route</p>
+        </div>
+        <form id="uploadForm">
+            <div class="form-group">
+                <label>Route ID (from MySQL 'routes' table)</label>
+                <input type="number" id="routeId" class="form-control" required placeholder="e.g. 1">
+            </div>
+            <div class="form-group">
+                <label>Upload Image</label>
+                <input type="file" id="imageFile" class="form-control" style="padding: 0.7rem" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%" id="submitBtn">Upload to Cloudinary</button>
+        </form>
+        <div id="result" style="margin-top: 1.5rem; text-align: center; color: #10b981; font-weight: 500; display: none;"></div>
+    </div>
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const resultDiv = document.getElementById('result');
+            
+            const routeId = document.getElementById('routeId').value;
+            const imageFile = document.getElementById('imageFile').files[0];
+            
+            const formData = new FormData();
+            formData.append('routeId', routeId);
+            formData.append('image', imageFile);
+
+            btn.innerText = 'Uploading...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/upload-image', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.color = '#10b981';
+                    resultDiv.innerHTML = `Successfully uploaded!<br><img src="${data.imageUrl}" style="max-width: 100%; border-radius: 8px; margin-top: 10px;">`;
+                } else {
+                    resultDiv.style.display = 'block';
+                    resultDiv.style.color = '#ef4444';
+                    resultDiv.innerText = data.error || 'Upload failed';
+                }
+            } catch (err) {
+                console.error(err);
+                resultDiv.style.display = 'block';
+                resultDiv.style.color = '#ef4444';
+                resultDiv.innerText = 'Network Error during upload';
+            }
+            btn.innerText = 'Upload to Cloudinary';
+            btn.disabled = false;
+        });
+    </script>
+</body>
+</html>

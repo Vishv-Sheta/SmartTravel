@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTravel - Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 2rem;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .auth-card h2 {
+            margin-bottom: 2rem;
+        }
+
+        .auth-card p {
+            margin-top: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .auth-card a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="brand">AuraTravel</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Routes</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+            <a href="login.html" class="btn-primary" id="nav-login-btn">Sign In</a>
+        </div>
+    </nav>
+    <script src="nav.js"></script>
+
+    <div class="auth-container">
+        <div class="glass-panel auth-card animate-in">
+            <h2>Create an Account</h2>
+            <form id="register-form">
+                <div class="form-group" style="text-align: left;">
+                    <label>Full Name</label>
+                    <input type="text" class="form-control" id="name" required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" id="email" required>
+                </div>
+                <div class="form-group" style="text-align: left;">
+                    <label>Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Sign Up</button>
+            </form>
+            <p>Already have an account? <a href="login.html">Sign In</a></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('register-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert("Registration Successful!");
+                    window.location.href = "login.html";
+                } else {
+                    alert(data.message || "Registration failed");
+                }
+            } catch(e) {
+                alert("Server error");
+            }
+        });
+    </script>
+</body>
+</html>

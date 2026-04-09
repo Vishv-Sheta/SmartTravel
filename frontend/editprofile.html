@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AuraTravel - Edit Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .edit-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 2rem;
+        }
+
+        .edit-card {
+            width: 100%;
+            max-width: 500px;
+            padding: 2.5rem;
+            text-align: center;
+        }
+
+        .edit-card h2 {
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="brand">AuraTravel</a>
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="search.html">Search Routes</a>
+            <a href="about.html">About</a>
+            <a href="profile.html">Profile</a>
+        </div>
+    </nav>
+
+    <div class="edit-container">
+        <div class="glass-panel edit-card animate-in">
+            <h2>Update Your Info</h2>
+            <form id="editProfileForm">
+                <div class="form-group" style="text-align: left;">
+                    <label>Full Name</label>
+                    <input type="text" id="name" class="form-control">
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label>Email Address</label>
+                    <input type="email" id="email" class="form-control">
+                </div>
+
+                <div class="form-group" style="text-align: left;">
+                    <label>New Password (Optional)</label>
+                    <input type="password" id="password" class="form-control" placeholder="Leave blank to keep same">
+                </div>
+
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+            alert("Please login first.");
+            window.location.href = "login.html";
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch("/api/user/me", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+                .then(res => res.json())
+                .then(user => {
+                    document.getElementById("name").value = user.name || "";
+                    document.getElementById("email").value = user.email || "";
+                })
+                .catch(err => {
+                    alert("Session expired or error loading profile.");
+                    console.error(err);
+                    window.location.href = "login.html";
+                });
+        });
+
+        document.getElementById("editProfileForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById("name").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("/api/user/update", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: JSON.stringify({ name, email, password }),
+                });
+
+                const data = await response.json();
+                alert(data.message);
+                if(data.success) {
+                    window.location.href = "profile.html";
+                }
+            } catch(e) {
+                alert("Server error processing request");
+            }
+        });
+    </script>
+</body>
+</html>
