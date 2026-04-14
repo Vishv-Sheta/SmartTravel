@@ -13,16 +13,11 @@ SmartTravel (formerly SmartTravel) is an AI-powered, modern travel booking platf
 ## Screenshots
 
 ### Homepage
-*(Add your homepage screenshot here)*
-![Homepage](./screenshots/homepage.png)
+![Homepage](./screenshots/Homepage.png)
 
 ### Route selection
 *(Add your route selection screenshot here)*
 ![Route selection](./screenshots/route-selection.png)
-
-### Booking flow
-*(Add your booking flow screenshot here)*
-![Booking flow](./screenshots/booking-flow.png)
 
 ### Payment page
 *(Add your payment page screenshot here)*
@@ -43,13 +38,19 @@ SmartTravel/
 │   ├── .env                  # Environment secrets (ignored)
 │   └── package.json          # Node dependencies
 └── frontend/                 # Static web client
-    ├── index.html            # Landing and AI picks
-    ├── search.html           # Route querying
-    ├── payment.html          # Payment UI
-    ├── login.html            # Authentication
-    ├── profile.html          # User account management
+    ├── index.html            # Landing Page
+    ├── search.html           # Search Page
+    ├── payment.html          # Payment Page
+    ├── login.html            # Login Page
+    ├── register.html         # Sign Up Page
+    ├── profile.html          # Profile Page
+    ├── editprofile.html      # Edit Profile Page
+    ├── thankyou.html         # Confirmation Page
+    ├── about.html            # About Page
+    ├── admin-upload.html     # Admin Upload Page
     ├── styles.css            # Centralized CSS classes
-    └── nav.js                # App navigation routing
+    ├── nav.js                # Navigation routing
+    └── config.js             # API configuration
 ```
 
 ## Future scope

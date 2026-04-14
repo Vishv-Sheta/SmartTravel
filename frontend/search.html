@@ -137,7 +137,7 @@
         .price {
             font-size: 1.8rem;
             font-weight: 800;
-            color: white;
+            color: var(--primary);
             margin-bottom: 0.5rem;
         }
 
@@ -305,6 +305,7 @@
         }
 
         function proceedToBook(id) {
+            sessionStorage.setItem('selectedRouteId', id);
             window.location.href = `payment.html?routeId=${id}`;
         }
 
