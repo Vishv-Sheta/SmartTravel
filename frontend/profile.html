@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <script src="config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTravel - Profile</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>SmartTravel - Profile</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .profile-container {
@@ -73,9 +77,10 @@
         }
     </style>
 </head>
+
 <body>
     <nav>
-        <a href="index.html" class="brand">AuraTravel</a>
+        <a href="index.html" class="brand">SmartTravel</a>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="search.html">Search Routes</a>
@@ -87,12 +92,12 @@
     <div class="profile-container">
         <div class="glass-panel profile-card animate-in">
             <h2>Your Profile</h2>
-            
+
             <div class="info-group">
                 <span>Full Name</span>
                 <strong id="userName">Loading...</strong>
             </div>
-            
+
             <div class="info-group">
                 <span>Email Address</span>
                 <strong id="userEmail">Loading...</strong>
@@ -110,7 +115,7 @@
             localStorage.removeItem("token");
             window.location.href = "login.html";
         }
-        
+
         document.addEventListener('DOMContentLoaded', () => {
             const token = localStorage.getItem("token");
 
@@ -119,7 +124,7 @@
                 window.location.href = "login.html";
             }
 
-            fetch("/api/user/me", {
+            fetch(API_BASE_URL + "/api/user/me", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -137,4 +142,5 @@
         });
     </script>
 </body>
+
 </html>

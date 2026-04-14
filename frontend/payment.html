@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
+    <script src="config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTravel - Secure Checkout</title>
+    <title>SmartTravel - Secure Checkout</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap"
         rel="stylesheet">
@@ -74,7 +75,7 @@
 <body>
 
     <nav>
-        <a href="index.html" class="brand">AuraTravel</a>
+        <a href="index.html" class="brand">SmartTravel</a>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="search.html">Search Routes</a>
@@ -143,7 +144,7 @@
             const routeId = urlParams.get('routeId');
 
             if (routeId) {
-                fetch(`/api/routes/${routeId}`)
+                fetch(`${API_BASE_URL}/api/routes/${routeId}`)
                     .then(res => res.json())
                     .then(data => {
                         if (data.success && data.route) {
@@ -171,7 +172,7 @@
 
                 try {
                     // Directly post to Secure Booking API which handles payment auth internally
-                    const res = await fetch('/bookings', {
+                    const res = await fetch(API_BASE_URL + '/bookings', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',

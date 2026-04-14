@@ -44,29 +44,29 @@ db.connect((err) => {
 const crypto = require('crypto');
 
 app.get("/api/generate-token", (req, res) => {
-    const email = req.query.email;
-    const token = crypto.randomBytes(4).toString('hex').toUpperCase();
-    const expiry = Date.now() + 300000;
+  const email = req.query.email;
+  const token = crypto.randomBytes(4).toString('hex').toUpperCase();
+  const expiry = Date.now() + 300000;
 
-    db.query("UPDATE users SET reset_token = ?, token_expiry = ? WHERE email = ?", [token, expiry, email], () => {
-        console.log(`Token for changing password for account ${email} is ${token}`);
-        res.send("Secure token generated. Check the Server Console!");
-    });
+  db.query("UPDATE users SET reset_token = ?, token_expiry = ? WHERE email = ?", [token, expiry, email], () => {
+    console.log(`Token for changing password for account ${email} is ${token}`);
+    res.send("Secure token generated. Check the Server Console!");
+  });
 });
 
 app.post("/api/reset-secure", async (req, res) => {
-    const { token, password } = req.body;
+  const { token, password } = req.body;
 
-    db.query("SELECT * FROM users WHERE reset_token = ? AND token_expiry > ?", [token, Date.now()], async (err, results) => {
-        if (results.length === 0) {
-            return res.status(403).send("RESOLUTION ACTIVE: Reset denied. Token is missing or invalid.");
-        }
+  db.query("SELECT * FROM users WHERE reset_token = ? AND token_expiry > ?", [token, Date.now()], async (err, results) => {
+    if (results.length === 0) {
+      return res.status(403).send("RESOLUTION ACTIVE: Reset denied. Token is missing or invalid.");
+    }
 
-        const hashedPass = await bcrypt.hash(password, 10);
-        db.query("UPDATE users SET password = ?, reset_token = NULL WHERE id = ?", [hashedPass, results[0].id], () => {
-            res.send("SUCCESS: Password updated securely using token verification.");
-        });
+    const hashedPass = await bcrypt.hash(password, 10);
+    db.query("UPDATE users SET password = ?, reset_token = NULL WHERE id = ?", [hashedPass, results[0].id], () => {
+      res.send("SUCCESS: Password updated securely using token verification.");
     });
+  });
 });
 
 app.post("/api/login", (req, res) => {
@@ -113,28 +113,28 @@ app.post("/api/register", async (req, res) => {
 app.get("/routes", (req, res) => {
   const { from, to, mode } = req.query;
   console.log("Searching routes: ", from, " -> ", to, " Mode: ", mode);
-  
+
   let queryStr = "SELECT * FROM routes";
   let queryParams = [];
-  if(from || to || mode) queryStr += " WHERE"
+  if (from || to || mode) queryStr += " WHERE"
   if (from) {
     queryStr += " LOWER(fromloc) = LOWER(?)"
     queryParams.push(from);
   }
-  
+
   if (to) {
-    if(from) queryStr += " AND"
+    if (from) queryStr += " AND"
     queryStr += " LOWER(toloc) = LOWER(?)"
     queryParams.push(to);
   }
 
   if (mode) {
-    if(from || to) queryStr += " AND"
+    if (from || to) queryStr += " AND"
     queryStr += " LOWER(MODE) = LOWER(?)";
     queryParams.push(mode);
   }
   queryStr += " ORDER BY MODE;"
-  
+
   db.query(queryStr, queryParams, (err, results) => {
     if (err) {
       console.error("Error fetching routes:", err);
@@ -156,17 +156,17 @@ app.get("/api/routes/:id", (req, res) => {
 
 app.get("/api/ai/recommendations", (req, res) => {
   db.query("SELECT * FROM routes LIMIT 6", (err, results) => {
-      if(err) {
-          return res.status(500).json({ success: false, error: "Database error" });
-      }
-      const aiPicks = results.map(route => ({
-          id: route.id,
-          destination: route.toloc,
-          image: route.image_url || null,
-          tag: "Top Data Pick",
-          price: route.price || 0
-      }));
-      res.json({ success: true, picks: aiPicks });
+    if (err) {
+      return res.status(500).json({ success: false, error: "Database error" });
+    }
+    const aiPicks = results.map(route => ({
+      id: route.id,
+      destination: route.toloc,
+      image: route.image_url || null,
+      tag: "Top Data Pick",
+      price: route.price || 0
+    }));
+    res.json({ success: true, picks: aiPicks });
   });
 });
 
@@ -181,7 +181,7 @@ app.post('/bookings', (req, res) => {
 
     const userId = decoded.id;
     const { routeId, cardNumber } = req.body;
-    
+
     db.query("SELECT * FROM routes WHERE id = ?", [routeId], (err, results) => {
       if (err) return res.status(500).json({ success: false, message: "Database error" });
       if (results.length === 0) return res.status(404).json({ success: false, message: "Route not found or unavailable" });
@@ -194,13 +194,13 @@ app.post('/bookings', (req, res) => {
       `;
 
       db.query(sql, [
-        userId, 
-        route.fromloc, 
-        route.toloc, 
-        route.MODE, 
-        route.operator, 
-        route.deptime, 
-        route.arrtime, 
+        userId,
+        route.fromloc,
+        route.toloc,
+        route.MODE,
+        route.operator,
+        route.deptime,
+        route.arrtime,
         route.price
       ], (err, result) => {
         if (err) {
@@ -209,9 +209,9 @@ app.post('/bookings', (req, res) => {
         }
 
         setTimeout(() => {
-          res.json({ 
-            success: true, 
-            message: 'Booking successful', 
+          res.json({
+            success: true,
+            message: 'Booking successful',
             bookingId: result.insertId,
             transactionId: "TXN-" + crypto.randomBytes(6).toString('hex').toUpperCase()
           });
@@ -237,11 +237,11 @@ app.put("/api/user/update", async (req, res) => {
     const userId = decoded.id;
     const { name, email, password } = req.body;
 
-    try{
+    try {
       let fields = [];
       let values = [];
 
-      if(name){
+      if (name) {
         fields.push("name = ?");
         values.push(name);
       }
@@ -249,32 +249,32 @@ app.put("/api/user/update", async (req, res) => {
         fields.push("email = ?");
         values.push(email);
       }
-      if(password){
+      if (password) {
         const hashedPass = await bcrypt.hash(password, 10);
         fields.push("password = ?");
         values.push(hashedPass);
       }
 
-      if(fields.length === 0){
-        return res.status(400).json({success: false, message: "No Fields to update"});
+      if (fields.length === 0) {
+        return res.status(400).json({ success: false, message: "No Fields to update" });
       }
 
       values.push(userId);
       const qry = `UPDATE users SET ${fields.join(", ")} WHERE id = ?`;
 
       db.query(qry, values, (err, result) => {
-        if(err){
+        if (err) {
           console.error("Update error: ", err);
-          return res.status(500).json({success: false, message: "Update failed"});
+          return res.status(500).json({ success: false, message: "Update failed" });
         }
         if (result.affectedRows === 0) {
           return res.status(404).json({ success: false, message: "User not found" });
         }
-        res.json({success: true, message: "Profile updated successfully"});
+        res.json({ success: true, message: "Profile updated successfully" });
       });
-    }catch(error){
+    } catch (error) {
       console.error("Update exception:", error);
-      return res.status(500).json({success: false, message: "Server error"});
+      return res.status(500).json({ success: false, message: "Server error" });
     }
   });
 });
@@ -314,28 +314,28 @@ app.listen(port, () => {
 app.post('/api/admin/upload-image', upload.single('image'), async (req, res) => {
   const { routeId } = req.body;
   try {
-      if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
-      
-      const result = await cloudinary.uploader.upload(req.file.path, {
-          folder: "auratravel_routes",
-          quality: "auto",
-          fetch_format: "auto"
-      });
-      fs.unlinkSync(req.file.path);
-      
-      db.query("UPDATE routes SET image_url = ? WHERE id = ?", [result.secure_url, routeId], (err, dbRes) => {
-          if (err) {
-              console.error("DB update failed:", err);
-              return res.status(500).json({ error: "Failed to link Image to Route in DB (Does column image_url exist?)" });
-          }
-          if (dbRes.affectedRows === 0) {
-               return res.status(404).json({ error: "Route ID not found!" });
-          }
-          res.json({ success: true, imageUrl: result.secure_url });
-      });
-      
-  } catch(err) {
-      console.error("Cloudinary failure:", err);
-      res.status(500).json({ error: "Cloudinary external upload failed" });
+    if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "SmartTravel_routes",
+      quality: "auto",
+      fetch_format: "auto"
+    });
+    fs.unlinkSync(req.file.path);
+
+    db.query("UPDATE routes SET image_url = ? WHERE id = ?", [result.secure_url, routeId], (err, dbRes) => {
+      if (err) {
+        console.error("DB update failed:", err);
+        return res.status(500).json({ error: "Failed to link Image to Route in DB (Does column image_url exist?)" });
+      }
+      if (dbRes.affectedRows === 0) {
+        return res.status(404).json({ error: "Route ID not found!" });
+      }
+      res.json({ success: true, imageUrl: result.secure_url });
+    });
+
+  } catch (err) {
+    console.error("Cloudinary failure:", err);
+    res.status(500).json({ error: "Cloudinary external upload failed" });
   }
 });

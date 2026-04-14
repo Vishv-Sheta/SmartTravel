@@ -2,9 +2,10 @@
 <html lang="en">
 
 <head>
+    <script src="config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTravel - Route Results</title>
+    <title>SmartTravel - Route Results</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
@@ -169,7 +170,7 @@
 <body>
 
     <nav>
-        <a href="index.html" class="brand">AuraTravel</a>
+        <a href="index.html" class="brand">SmartTravel</a>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="search.html">Search Routes</a>
@@ -236,14 +237,14 @@
         async function fetchRoutes(fromLoc, toLoc, modeLoc) {
             try {
                 const query = new URLSearchParams();
-                
+
                 query.append("from", fromLoc);
                 query.append("to", toLoc);
                 query.append("mode", modeLoc);
 
                 console.log('Constructed query string:', query.toString());
 
-                const res = await fetch(`/routes?${query.toString()}`);
+                const res = await fetch(`${API_BASE_URL}/routes?${query.toString()}`);
                 const data = await res.json();
 
                 console.log('Response data:', data);

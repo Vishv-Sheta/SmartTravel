@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <script src="config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AuraTravel - Register</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>SmartTravel - Register</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <style>
         .auth-container {
@@ -39,9 +43,10 @@
         }
     </style>
 </head>
+
 <body>
     <nav>
-        <a href="index.html" class="brand">AuraTravel</a>
+        <a href="index.html" class="brand">SmartTravel</a>
         <div class="nav-links">
             <a href="index.html">Home</a>
             <a href="search.html">Search Routes</a>
@@ -82,22 +87,23 @@
             const password = document.getElementById('password').value;
 
             try {
-                const res = await fetch('/api/register', {
+                const res = await fetch(API_BASE_URL + '/api/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name, email, password })
                 });
                 const data = await res.json();
-                if(data.success) {
+                if (data.success) {
                     alert("Registration Successful!");
                     window.location.href = "login.html";
                 } else {
                     alert(data.message || "Registration failed");
                 }
-            } catch(e) {
+            } catch (e) {
                 alert("Server error");
             }
         });
     </script>
 </body>
+
 </html>
